@@ -9,13 +9,13 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
 
 def get_current_branch():
-    label = subprocess.check_output(["git", "describe", "--tag"])
+    label = subprocess.check_output(["git branch | grep \* | cut -d ' ' -f2"])
     return label.decode().strip()
 
 
-def verify():
+def verify(repo_name):
     g = Github(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
-    repo = g.get_repo('OpenTrons/opentrons-api')
+    repo = g.get_repo(repo_name)
 
     branches = list(repo.get_branches())
     branch_names = [b.name for b in branches]
