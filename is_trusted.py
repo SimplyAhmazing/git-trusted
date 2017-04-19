@@ -10,7 +10,7 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
 
 def get_current_branch():
-    label = subprocess.check_output(["git branch | grep \* | cut -d ' ' -f2"])
+    label = subprocess.check_output(r"""git branch | grep \* | cut -d ' ' -f2""", shell=True)
     return label.decode().strip()
 
 
