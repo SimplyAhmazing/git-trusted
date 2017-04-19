@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 
 from github import Github
@@ -14,6 +15,7 @@ def get_current_branch():
 
 
 def verify(repo_name):
+    print('[Branch Verifier] Verifying repo:', repo_name)
     g = Github(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
     repo = g.get_repo(repo_name)
 
@@ -25,7 +27,8 @@ def verify(repo_name):
 
     if current_branch not in branch_names:
         raise SystemExit('Untrusted branch detected')
+    print('[Branch Verifier] Branch is valid')
 
 
 if __name__ == '__main__':
-    verify()
+    verify(sys.argv[1])
