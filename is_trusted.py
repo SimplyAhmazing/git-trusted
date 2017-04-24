@@ -19,7 +19,7 @@ def is_internal_pull(repo):
         """git log -n 2 --pretty=format:"%H" | tail -1""", shell=True
         ).decode()
     prs = list(repo.get_pulls())
-    print('[Branch Verifier] PR last sha is', last_commit, set(i.head.sha for i in prs))
+    print('[Branch Verifier] PR last sha is', last_commit)
     return last_commit in set(i.head.sha for i in prs)
 
 def is_internal_branch(repo):
@@ -35,7 +35,7 @@ def verify(repo_name):
     repo = g.get_repo(repo_name)
 
     if not any([is_internal_branch(repo), is_internal_pull(repo)]):
-        pass # raise SystemExit('Untrusted branch detected')
+        raise SystemExit('Untrusted branch detected')
 
     print('[Branch Verifier] Branch is valid')
 
