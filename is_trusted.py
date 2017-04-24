@@ -14,19 +14,29 @@ def get_current_branch():
     return label.decode().strip()
 
 
+def is_internal_pull(repo):
+    last_commit = subprocess.check_output(
+        """git log -n 2 --pretty=format:"%H" | tail -1""", shell=True
+        ).label.decode()
+    prs = list(repo.get_pulls())
+    print('[Branch Verifier] PR last sha is', last_commit)
+    return last_commit in set(i.head.sha for i in prs)
+
+def is_internal_branch(repo):
+    branches = list(repo.get_branches())
+    branch_names = [b.name for b in branches]
+    current_branch = get_current_branch()
+    print('[Branch Verifier] Current branch name is', current_branch)
+    return current_branch in branch_names
+
 def verify(repo_name):
     print('[Branch Verifier] Verifying repo:', repo_name)
     g = Github(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
     repo = g.get_repo(repo_name)
 
-    branches = list(repo.get_branches())
-    branch_names = [b.name for b in branches]
-
-    current_branch = get_current_branch()
-    print('[Branch Verifier] Current branch name is', current_branch)
-
-    if current_branch not in branch_names:
+    if not any([is_internal_branch(repo), is_internal_pull(repo)]):
         raise SystemExit('Untrusted branch detected')
+
     print('[Branch Verifier] Branch is valid')
 
 
