@@ -17,7 +17,7 @@ def get_current_branch():
 def is_internal_pull(repo):
     last_commit = subprocess.check_output(
         """git log -n 2 --pretty=format:"%H" | tail -1""", shell=True
-        ).label.decode()
+        ).decode()
     prs = list(repo.get_pulls())
     print('[Branch Verifier] PR last sha is', last_commit)
     return last_commit in set(i.head.sha for i in prs)
